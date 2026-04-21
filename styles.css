@@ -1,0 +1,19 @@
+html {
+  height: 100dvh;
+  width: 100dvw;
+  background-color: #e5e5f7;
+  background-image: radial-gradient(#242424 0.8px, #ffffff 0.8px);
+  background-size: 5px 5px;
+}
+
+#main-wrapper {
+  padding: 24px;
+}
+
+#main-canvas {
+  width: 800px;
+  height: 600px;
+  border: 2px solid black;
+  background: white;
+  box-shadow: 5px 5px 0px 1px #000000;
+}
