@@ -220,22 +220,6 @@ function selectPalette(palette) {
   document.getElementById("palette-tertiary-input").value = palette.tertiary;
   document.getElementById("palette-tertiary-input-text").value =
     palette.tertiary;
-  // Add listeners to color inputs
-  document
-    .getElementById("palette-bg-input")
-    .addEventListener("change", updateCurrentPalette);
-  document
-    .getElementById("palette-fg-input")
-    .addEventListener("change", updateCurrentPalette);
-  document
-    .getElementById("palette-primary-input")
-    .addEventListener("change", updateCurrentPalette);
-  document
-    .getElementById("palette-secondary-input")
-    .addEventListener("change", updateCurrentPalette);
-  document
-    .getElementById("palette-tertiary-input")
-    .addEventListener("change", updateCurrentPalette);
 
   colors = currentEditingPalette;
   applyPalette();
@@ -261,6 +245,114 @@ function updateCurrentPalette() {
   colors = currentEditingPalette;
   applyPalette();
 }
+
+// ============================================================================
+// PALETTE COLOR INPUT LISTENERS
+// ============================================================================
+
+// Background color inputs
+document.getElementById("palette-bg-input").addEventListener("input", (e) => {
+  if (currentEditingPalette) {
+    currentEditingPalette.background = e.target.value;
+    document.getElementById("palette-bg-input-text").value = e.target.value;
+    updateCurrentPalette();
+  }
+});
+
+document
+  .getElementById("palette-bg-input-text")
+  .addEventListener("input", (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+      currentEditingPalette.background = e.target.value;
+      document.getElementById("palette-bg-input").value = e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+// Foreground color inputs
+document.getElementById("palette-fg-input").addEventListener("input", (e) => {
+  if (currentEditingPalette) {
+    currentEditingPalette.foreground = e.target.value;
+    document.getElementById("palette-fg-input-text").value = e.target.value;
+    updateCurrentPalette();
+  }
+});
+
+document
+  .getElementById("palette-fg-input-text")
+  .addEventListener("input", (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+      currentEditingPalette.foreground = e.target.value;
+      document.getElementById("palette-fg-input").value = e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+// Primary color inputs
+document
+  .getElementById("palette-primary-input")
+  .addEventListener("input", (e) => {
+    if (currentEditingPalette) {
+      currentEditingPalette.primary = e.target.value;
+      document.getElementById("palette-primary-input-text").value =
+        e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+document
+  .getElementById("palette-primary-input-text")
+  .addEventListener("input", (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+      currentEditingPalette.primary = e.target.value;
+      document.getElementById("palette-primary-input").value = e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+// Secondary color inputs
+document
+  .getElementById("palette-secondary-input")
+  .addEventListener("input", (e) => {
+    if (currentEditingPalette) {
+      currentEditingPalette.secondary = e.target.value;
+      document.getElementById("palette-secondary-input-text").value =
+        e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+document
+  .getElementById("palette-secondary-input-text")
+  .addEventListener("input", (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+      currentEditingPalette.secondary = e.target.value;
+      document.getElementById("palette-secondary-input").value = e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+// Tertiary color inputs
+document
+  .getElementById("palette-tertiary-input")
+  .addEventListener("input", (e) => {
+    if (currentEditingPalette) {
+      currentEditingPalette.tertiary = e.target.value;
+      document.getElementById("palette-tertiary-input-text").value =
+        e.target.value;
+      updateCurrentPalette();
+    }
+  });
+
+document
+  .getElementById("palette-tertiary-input-text")
+  .addEventListener("input", (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+      currentEditingPalette.tertiary = e.target.value;
+      document.getElementById("palette-tertiary-input").value = e.target.value;
+      updateCurrentPalette();
+    }
+  });
 
 // ============================================================================
 // BUTTON HELPERS
@@ -290,6 +382,16 @@ function setActiveColorButton(activeBtn, color) {
 // ============================================================================
 document.addEventListener("keydown", (e) => {
   if (isMobile) return;
+
+  // don't trigger while typing or with modals open :)
+  if (
+    e.target.tagName === "INPUT" ||
+    e.target.tagName === "TEXTAREA" ||
+    paletteModal.style.display === "block" ||
+    exportModal.style.display === "block"
+  ) {
+    return;
+  }
 
   // Ctrl+Z for undo
   if ((e.ctrlKey || e.metaKey) && e.key === "z") {
