@@ -35,7 +35,7 @@ let currentColor = "#000000";
 const penSizes = [5, 7, 9];
 let penSizeIndex = 1;
 let penWidth = penSizes[penSizeIndex];
-const brushSizes = [5, 7, 14, 19, 24, 30];
+const brushSizes = [7, 10, 16, 21, 26, 36];
 let brushSizeIndex = 3;
 let colorWidth = brushSizes[brushSizeIndex];
 let eraserWidth = 15;
@@ -85,13 +85,31 @@ const tertiaryBtn = document.getElementById("tertiary-color");
 // PALETTE & STYLING
 // ============================================================================
 
-let colors = DEFAULT_PALETTE.find((p) => p.name === "Nord-ish");
-const styleSheet = new CSSStyleSheet();
+const paletteBtn = document.getElementById("palette-btn");
+const paletteModal = document.getElementById("palette-modal");
+const paletteModalClose = document.getElementById("palette-modal-close");
+const paletteList = document.getElementById("palette-list");
 
-document.getElementById("palette-test").addEventListener("click", () => {
-  colors = DEFAULT_PALETTE[Math.floor(Math.random() * DEFAULT_PALETTE.length)];
-  applyPalette();
+let currentEditingPalette = null;
+
+paletteBtn.addEventListener("click", () => {
+  paletteModal.style.display = "block";
+  populatePaletteList();
 });
+
+paletteModalClose.addEventListener("click", () => {
+  paletteModal.style.display = "none";
+});
+
+paletteModal.addEventListener("click", (e) => {
+  if (e.target === paletteModal) {
+    paletteModal.style.display = "none";
+  }
+});
+
+// DEFAULT PALETTE INITIALIZATION
+let colors = DEFAULT_PALETTE.find((p) => p.name === "default");
+const styleSheet = new CSSStyleSheet();
 
 let lastSelectedColor = {
   type: "primary",
@@ -141,6 +159,88 @@ const applyPalette = () => {
 };
 applyPalette();
 
+function populatePaletteList() {
+  paletteList.innerHTML = "";
+
+  DEFAULT_PALETTE.forEach((palette) => {
+    const paletteItem = document.createElement("div");
+    paletteItem.className = "palette-item";
+    paletteItem.innerHTML = `
+      <div class="palette-item-name">${palette.name}</div>
+      <div class="palette-item-preview">
+        <div class="palette-color" style="background-color: ${palette.background}"></div>
+        <div class="palette-color" style="background-color: ${palette.foreground}"></div>
+        <div class="palette-color" style="background-color: ${palette.primary}"></div>
+        <div class="palette-color" style="background-color: ${palette.secondary}"></div>
+        <div class="palette-color" style="background-color: ${palette.tertiary}"></div>
+      </div>
+    `;
+
+    paletteItem.addEventListener("click", () => {
+      selectPalette(palette);
+    });
+
+    paletteList.appendChild(paletteItem);
+  });
+}
+
+function selectPalette(palette) {
+  currentEditingPalette = { ...palette };
+
+  document.getElementById("palette-bg-input").value = palette.background;
+  document.getElementById("palette-bg-input-text").value = palette.background;
+  document.getElementById("palette-fg-input").value = palette.foreground;
+  document.getElementById("palette-fg-input-text").value = palette.foreground;
+  document.getElementById("palette-primary-input").value = palette.primary;
+  document.getElementById("palette-primary-input-text").value = palette.primary;
+  document.getElementById("palette-secondary-input").value = palette.secondary;
+  document.getElementById("palette-secondary-input-text").value =
+    palette.secondary;
+  document.getElementById("palette-tertiary-input").value = palette.tertiary;
+  document.getElementById("palette-tertiary-input-text").value =
+    palette.tertiary;
+  // Add listeners to color inputs
+  document
+    .getElementById("palette-bg-input")
+    .addEventListener("change", updateCurrentPalette);
+  document
+    .getElementById("palette-fg-input")
+    .addEventListener("change", updateCurrentPalette);
+  document
+    .getElementById("palette-primary-input")
+    .addEventListener("change", updateCurrentPalette);
+  document
+    .getElementById("palette-secondary-input")
+    .addEventListener("change", updateCurrentPalette);
+  document
+    .getElementById("palette-tertiary-input")
+    .addEventListener("change", updateCurrentPalette);
+
+  colors = currentEditingPalette;
+  applyPalette();
+}
+
+function updateCurrentPalette() {
+  if (!currentEditingPalette) return;
+
+  currentEditingPalette.background =
+    document.getElementById("palette-bg-input").value;
+  currentEditingPalette.foreground =
+    document.getElementById("palette-fg-input").value;
+  currentEditingPalette.primary = document.getElementById(
+    "palette-primary-input",
+  ).value;
+  currentEditingPalette.secondary = document.getElementById(
+    "palette-secondary-input",
+  ).value;
+  currentEditingPalette.tertiary = document.getElementById(
+    "palette-tertiary-input",
+  ).value;
+
+  colors = currentEditingPalette;
+  applyPalette();
+}
+
 // ============================================================================
 // BUTTON HELPERS
 // ============================================================================
@@ -168,8 +268,59 @@ const setActiveColorButton = (activeBtn, color) => {
 // EXPORT FUNCTIONALITY
 // ============================================================================
 
-// Export as static PNG
-function exportAsPNG(transparent = false) {
+const exportBtn = document.getElementById("export-btn");
+const exportModal = document.getElementById("export-modal");
+const exportModalClose = document.getElementById("export-modal-close");
+const exportStaticCheckbox = document.getElementById("export-static");
+const exportTransparentCheckbox = document.getElementById("export-transparent");
+const exportFilenameInput = document.getElementById("export-filename-input");
+const exportDoBtn = document.getElementById("export-do-btn");
+const exportCancelBtn = document.getElementById("export-cancel-btn");
+const headerTitleInput = document.getElementById("header-title");
+
+exportBtn.addEventListener("click", () => {
+  exportModal.style.display = "block";
+  exportFilenameInput.value = headerTitleInput.value || "untitled";
+});
+
+exportModalClose.addEventListener("click", () => {
+  exportModal.style.display = "none";
+});
+
+exportCancelBtn.addEventListener("click", () => {
+  exportModal.style.display = "none";
+});
+
+exportModal.addEventListener("click", (e) => {
+  if (e.target === exportModal) {
+    exportModal.style.display = "none";
+  }
+});
+
+exportStaticCheckbox.addEventListener("change", () => {
+  if (exportStaticCheckbox.checked) {
+    exportDoBtn.textContent = "Export as PNG";
+  } else {
+    exportDoBtn.textContent = "Export as GIF";
+  }
+});
+
+exportDoBtn.addEventListener("click", () => {
+  const filename = exportFilenameInput.value || "untitled";
+  const isTransparent = exportTransparentCheckbox.checked;
+  const isStatic = exportStaticCheckbox.checked;
+
+  if (isStatic) {
+    exportAsPNG(isTransparent, filename);
+  } else {
+    exportAsGIF(isTransparent, filename);
+  }
+
+  exportModal.style.display = "none";
+});
+
+// Update export functions with filename parameter
+function exportAsPNG(transparent = false, filename = "untitled") {
   const exportCanvas = document.createElement("canvas");
   exportCanvas.width = canvas.width;
   exportCanvas.height = canvas.height;
@@ -184,26 +335,72 @@ function exportAsPNG(transparent = false) {
 
   const link = document.createElement("a");
   link.href = exportCanvas.toDataURL("image/png");
-  link.download = `painting-${Date.now()}.png`;
+  link.download = `${filename}.png`;
   link.click();
 }
 
-// Export as animated GIF (using gif.js library)
-async function exportAsGIF() {
-  // COMO FAZER???????
+async function exportAsGIF(transparent = false, filename = "untitled") {
+  if (!window.GIF) {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js";
+    script.async = true;
+    document.head.appendChild(script);
+
+    await new Promise((resolve) => {
+      script.onload = resolve;
+    });
+  }
+
+  const gif = new GIF({
+    workers: 1,
+    quality: 10,
+    width: canvas.width,
+    height: canvas.height,
+  });
+
+  let frameCount = 0;
+  const totalFrames = WIGGLE_FPS * 2;
+  const savedWiggleFrame = wiggleFrame;
+
+  function captureFrame() {
+    if (frameCount >= totalFrames) {
+      gif.render();
+      return;
+    }
+
+    wiggleFrame++;
+    drawAllStrokes();
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext("2d");
+
+    if (!transparent) {
+      tempCtx.fillStyle = canvas.style.backgroundColor;
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    }
+
+    tempCtx.drawImage(canvas, 0, 0);
+    gif.addFrame(tempCanvas, { delay: WIGGLE_INTERVAL });
+    frameCount++;
+
+    requestAnimationFrame(captureFrame);
+  }
+
+  return new Promise((resolve) => {
+    gif.on("finished", function (blob) {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${filename}.gif`;
+      link.click();
+      wiggleFrame = savedWiggleFrame;
+      resolve();
+    });
+
+    captureFrame();
+  });
 }
-
-// Add export buttons to your HTML and wire them up:
-document
-  .getElementById("export-png-btn")
-  .addEventListener("click", () => exportAsPNG(false));
-document
-  .getElementById("export-png-transparent-btn")
-  .addEventListener("click", () => exportAsPNG(true));
-document
-  .getElementById("export-gif-btn")
-  .addEventListener("click", () => exportAsGIF(false));
-
 // ============================================================================
 // COLOR BUTTON EVENT LISTENERS
 // ============================================================================
@@ -510,11 +707,27 @@ function drawStroke(targetCtx, points, mode, color, lineWidth, strokeSeed = 0) {
   }
 
   if (points.length === 1) {
-    let wiggle = getWiggle(0);
-    let x = points[0].x + wiggle.x;
-    let y = points[0].y + wiggle.y;
-    const halfWidth = lineWidth / 2;
-    targetCtx.fillRect(x - halfWidth, y - halfWidth, lineWidth, lineWidth);
+    const base = points[0];
+    const segments = 12;
+    const radius = lineWidth / 2;
+
+    targetCtx.beginPath();
+
+    for (let i = 0; i <= segments; i++) {
+      const t = (i / segments) * Math.PI * 2;
+
+      let wiggle = getWiggle(i);
+      const r = radius + (wiggle.x + wiggle.y) * 0.3; // shape noise
+
+      const x = base.x + Math.cos(t) * r;
+      const y = base.y + Math.sin(t) * r;
+
+      if (i === 0) targetCtx.moveTo(x, y);
+      else targetCtx.lineTo(x, y);
+    }
+
+    targetCtx.closePath();
+    targetCtx.fill();
   } else {
     targetCtx.beginPath();
     let startWiggle = getWiggle(0);

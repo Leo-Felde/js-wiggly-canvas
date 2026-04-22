@@ -37,7 +37,6 @@ body {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto auto;
-  padding: 2px;
   border: 3px solid var(--color-foreground);
   background-color: var(--color-background);
   background-size: 5px 5px;
@@ -47,6 +46,7 @@ body {
   position: relative;
   grid-column: 2;
   grid-row: 1;
+  margin-right: 2px;
   background-image: repeating-linear-gradient(
     0deg,
     var(--color-foreground),
@@ -66,9 +66,13 @@ body {
   transform: translate(-50%);
   border: none;
   text-align: center;
-  height: 25px;
+  height: 100%;
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+
+#header-title:active {
+  border: none;
 }
 
 #canvas-section {
@@ -78,16 +82,36 @@ body {
 
 #tools-section {
   padding-right: 2px;
+  padding-left: 2px;
+  margin-top: 2px;
   grid-column: 1;
   grid-row: 1 / span 2;
   align-self: start;
+  position: relative;
+  height: 100%;
 }
 
 #bottom-section {
   grid-column: 1 / span 2;
   grid-row: 3;
-  padding-top: 10px;
-  min-height: 80px;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(var(--color-foreground) 0.5px, transparent 0.5px),
+    radial-gradient(
+      var(--color-foreground) 0.5px,
+      var(--color-background) 0.5px
+    );
+  background-size: 4px 4px;
+  background-position:
+    0 0,
+    10px 10px;
+  border: 2px solid var(--color-foreground);
+  border-bottom: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  text-align: center;
 }
 
 #main-canvas {
@@ -98,6 +122,8 @@ body {
   height: 600px;
   border: 3px solid var(--color-foreground);
   background-color: var(--color-background);
+  border-bottom: 0px;
+  margin-right: 2px;
 }
 
 #buttons-wrapper {
@@ -142,7 +168,11 @@ body {
 .tool-btn:hover {
   stroke: var(--color-background);
   fill: var(--color-background);
-  background-color: var(--color-foreground);
+  background-color: color-mix(
+    in srgb,
+    var(--color-foreground),
+    transparent 15%
+  );
 }
 
 .tool-btn.active .svg-icon {
@@ -159,7 +189,6 @@ body {
   cursor: pointer;
   transition: all 0.05s linear;
   border: none;
-  margin-bottom: 4px;
   background-color: var(--color-background);
   border: solid 1px transparent;
   border-left: 0px;
@@ -174,6 +203,11 @@ body {
 
 .size-btn.active {
   border-color: var(--color-foreground) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--color-foreground),
+    transparent 65%
+  ) !important;
 }
 
 .size-btn:last-child.active {
@@ -210,9 +244,39 @@ body {
   background: var(--color-foreground);
 }
 
+#colors-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-background),
+    color-mix(in srgb, var(--color-background) 70%, transparent 100%)
+  );
+  background: linear-gradient(
+    90deg,
+    var(--color-background) 0%,
+    transparent 50%,
+    color-mix(in srgb, var(--color-foreground), transparent 65%) 100%
+  );
+  padding: 4px;
+  padding-right: 7px;
+  padding-left: 33px;
+  width: 100%;
+}
+
 .color-btn {
-  padding: 12px;
-  margin: 12px;
+  padding: 15px;
+  border: 2px solid color-mix(in srgb, var(--color-foreground), transparent 50%);
+}
+
+.color-btn:first-child {
+  margin-left: 8px;
+}
+
+.color-btn.active {
+  padding: 15px;
+  border: 3px solid var(--color-foreground);
 }
 
 .separator {
@@ -238,21 +302,6 @@ body {
 
 .tool-btn:last-child {
   margin-bottom: 0;
-}
-
-#bottom-section {
-  text-align: center;
-}
-
-#bottom-section:empty::before {
-  content: "🎨 PALETTE & EXPORT CONTROLS (coming soon)";
-  display: block;
-  color: #999;
-  font-size: 12px;
-  font-family: "Courier New", monospace;
-  letter-spacing: 1px;
-  padding: 20px;
-  text-align: center;
 }
 
 /* Responsive behavior */
@@ -367,4 +416,364 @@ body {
 #top-decoration {
   fill: var(--color-foreground);
   stroke: var(--color-foreground);
+}
+
+#palette-modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#palette-modal-content {
+  background-color: var(--color-background);
+  border: 3px solid var(--color-foreground);
+  display: flex;
+  width: 90%;
+  max-width: 800px;
+  height: 70vh;
+  flex-direction: column;
+  left: 50%;
+  transform: translate(-50%);
+  top: 10%;
+  position: relative;
+}
+
+#palette-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 2px solid var(--color-foreground);
+}
+
+#palette-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+#palette-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--color-foreground);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#palette-modal-close:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--color-foreground),
+    transparent 50%
+  );
+  color: var(--color-background);
+}
+
+.palette-modal-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 2px;
+}
+
+#palette-list {
+  flex: 1;
+  overflow-y: auto;
+  border-right: 2px solid var(--color-foreground);
+  padding: 10px;
+  background-color: var(--color-background);
+}
+
+.palette-item {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 2px solid var(--color-foreground);
+  background-color: var(--color-background);
+  transition: all 0.05s linear;
+}
+
+.palette-item:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--color-foreground),
+    transparent 50%
+  );
+  color: var(--color-background);
+}
+
+.palette-item-name {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.palette-item-preview {
+  display: flex;
+  gap: 4px;
+}
+
+.palette-color {
+  flex: 1;
+  height: 20px;
+  border: 1px solid var(--color-foreground);
+}
+
+#palette-editor {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#palette-editor-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.palette-color-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: end;
+  text-align: start;
+}
+
+.palette-color-input label {
+  min-width: 106px;
+  font-weight: bold;
+}
+
+.palette-color-input input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 2px solid var(--color-foreground);
+  cursor: pointer;
+}
+
+/* Scrollbar styling */
+#palette-list::-webkit-scrollbar,
+#palette-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+#palette-list::-webkit-scrollbar-track,
+#palette-editor::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+#palette-list::-webkit-scrollbar-thumb,
+#palette-editor::-webkit-scrollbar-thumb {
+  background: var(--color-foreground);
+  border: 1px solid var(--color-foreground);
+}
+
+#palette-list::-webkit-scrollbar-thumb:hover,
+#palette-editor::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+@media (max-width: 700px) {
+  #palette-modal-content {
+    flex-direction: column;
+    width: 95%;
+    height: 80vh;
+  }
+
+  .palette-modal-body {
+    flex-direction: column;
+  }
+
+  #palette-list {
+    border-right: none;
+    border-bottom: 2px solid var(--color-foreground);
+    max-height: 40%;
+  }
+
+  #palette-editor {
+    max-height: 60%;
+  }
+}
+
+.color-input {
+  background: transparent;
+  border: 1px solid var(--color-foreground);
+  color: var(--color-foreground);
+  height: 24px;
+}
+
+#palette-btn {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-foreground);
+  padding: 2px;
+}
+
+#palette-svg {
+  stroke: var(--color-foreground);
+  fill: var(--color-foreground);
+  pointer-events: none;
+}
+
+#palette-svg-primary {
+  fill: var(--color-primary);
+}
+#palette-svg-secondary {
+  fill: var(--color-secondary);
+}
+#palette-svg-tertiary {
+  fill: var(--color-tertiary);
+}
+
+#export-modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#export-modal-content {
+  background-color: var(--color-background);
+  border: 3px solid var(--color-foreground);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%);
+}
+
+#export-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 2px solid var(--color-foreground);
+}
+
+#export-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+#export-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--color-foreground);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#export-modal-close:hover {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+}
+
+#export-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+}
+
+.export-option label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.export-option input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.export-filename {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-filename label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.export-filename input[type="text"] {
+  padding: 8px;
+  border: 2px solid var(--color-foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: "Courier New", monospace;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.export-action-btn,
+.export-cancel-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid var(--color-foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.05s linear;
+}
+
+.export-action-btn:hover {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+}
+
+.export-cancel-btn:hover {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+}
+
+#export-btn {
+  position: absolute;
+  bottom: 4px;
+}
+
+#export-btn #secondary {
+  fill: var(--color-primary);
 }
