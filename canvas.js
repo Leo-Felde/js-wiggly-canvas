@@ -157,7 +157,7 @@ const applyPalette = () => {
   // Redraw canvas
   drawAllStrokes();
 };
-applyPalette();
+selectPalette(colors);
 
 function populatePaletteList() {
   paletteList.innerHTML = "";
