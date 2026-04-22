@@ -53,6 +53,7 @@ let currentWidth = penWidth;
 // Undo system
 let maxUndos = 5;
 let currentUndos = 0;
+let nukedUndoIndex = null;
 let nukedStrokes = null; // Store nuked strokes for undo
 
 // ============================================================================
@@ -703,18 +704,23 @@ eraserButton.addEventListener("click", (e) => {
 });
 
 undoButton.addEventListener("click", (e) => {
-  if (nukedStrokes !== null) {
+  if (nukedStrokes !== null && nukedUndoIndex === currentUndos) {
     strokes = nukedStrokes;
     nukedStrokes = null;
+    nukedUndoIndex = null;
+    currentUndos--;
   } else if (currentUndos > 0) {
-    nukedStrokes = null;
     strokes.pop();
+    currentUndos--;
   }
-  currentUndos--;
 });
 
 nukeButton.addEventListener("click", (e) => {
   if (strokes.length > 0) {
+    if (currentUndos < 5) {
+      currentUndos++;
+    }
+    nukedUndoIndex = currentUndos;
     nukedStrokes = [...strokes]; // Save strokes before nuking
     strokes.length = 0;
   }
@@ -838,6 +844,13 @@ function stopDrawing() {
 
     if (currentUndos < (maxUndos > 0 ? maxUndos : currentUndos + 1)) {
       currentUndos++;
+    } else {
+      if (nukedStrokes !== null) {
+        nukedUndoIndex--;
+        if (nukedUndoIndex < 1) {
+          nukedStrokes = null;
+        }
+      }
     }
   }
   isDrawing = false;
