@@ -153,7 +153,12 @@ const applyPalette = () => {
   // Update state
   backgroundColor = colors.background;
   strokeColor = colors.foreground;
-  currentColor = colors.foreground;
+
+  if (currentMode === "color") {
+    setActiveColorButton(lastSelectedColor.btn, lastSelectedColor.color);
+  } else {
+    currentColor = colors.foreground;
+  }
 
   // Remap colors in existing strokes
   remapStrokeColors();
@@ -192,9 +197,6 @@ function selectPalette(palette) {
   currentEditingPalette = { ...palette };
 
   lastSelectedColor.color = palette[lastSelectedColor.type];
-  if (currentMode === "color") {
-    setActiveColorButton(lastSelectedColor.btn, lastSelectedColor.color);
-  }
 
   document.getElementById("palette-bg-input").value = palette.background;
   document.getElementById("palette-bg-input-text").value = palette.background;
