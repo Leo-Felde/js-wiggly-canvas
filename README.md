@@ -1,6 +1,6 @@
 # Chirp Paint — Wiggly Canvas Playground
-
-A minimalist drawing tool built with vanilla JavaScript and HTML5 Canvas
+[![](https://img.shields.io/badge/Live_Demo-Play_Now!-yellow?&logo=javascript)]([https://leo-felde.github.io/js-painter/](https://leo-felde.github.io/js-wiggly-canvas/))
+<p>A minimalist drawing tool built with vanilla JavaScript and HTML5 Canvas</p>
 
 Pick your colors, draw, and share your art! No installs, no setups, just fun
 
@@ -14,14 +14,11 @@ Pick your colors, draw, and share your art! No installs, no setups, just fun
 ### Colorful
 <img width="500" alt="Palette Menu preview" src="https://github.com/user-attachments/assets/19f7bdf9-c6f0-484d-a512-ec6140d141af" />
 
-
 ### Export as GIF
 <img width="500" alt="Exported as gif example" src="https://github.com/user-attachments/assets/c95b0b2b-12d8-4301-9215-1fe0c3ae3de3" />
 
-### Or as PNG with no background!
+### Or as PNG with no background
 <img width="500" alt="Static as image example" src="https://github.com/user-attachments/assets/8b2bbb49-95be-4569-9b3c-e14f33c520e5" />
-
-
 
 </div>
 
@@ -44,12 +41,13 @@ Pick your colors, draw, and share your art! No installs, no setups, just fun
 * **gif.js:** A JavaScript GIF encoder that runs in the background via Web Workers.
 
 ## Installation & Local Setup
-Because this project uses **Web Workers** for GIF encoding, browsers block the worker from running via the `file://` protocol. You only need this if you want to export your beautiful art as a gif with it's wigglyness, otherwise you can just open index.html and get painting!
+This project uses **Web Workers** for GIF encoding, browsers block the worker from running via the `file://` protocol, **if you want the Export as GIF to work** follow the instructions bellow.
+Otherwise, just open the index.html and export as static image (png).
 
 1.  **Clone the project:**
     ```bash
-    git clone https://github.com/Leo-Felde/js-painter.git
-    cd js-painter
+    git clone https://github.com/Leo-Felde/js-wiggly-canvas.git
+    cd js-wiggly-canvas
     ```
 
 2.  **Run a local server:**
@@ -63,14 +61,14 @@ Because this project uses **Web Workers** for GIF encoding, browsers block the w
     ```
 
 3.  **Open the App:**
-    Go to `http://127.0.0.1:8080` in your browser.
+    Go to `http://127.0.0.1:8080` in your browser and have fun.
 
 ## How to Use
-3.  **Toggle Wiggle:** For precision drawings, toggle the wiggly animation under the Options Menu.
-4.  **Draw:** Select the Pencil or Brush and click and drag on the canvas to create your masterpiece.
-5.  **Change Colors:** Under the Options Menu, select from many 5-color palettes or make your own.
-6.  **Background transparency** In the Palette Menu, toggle the Transparency Mask and add your own background wherever you want!
-7.  **Export:** * Export as animated gif, static image with or without a background!
+1.  **Toggle Wiggle:** For precision drawings, toggle the wiggly animation under the Options Menu
+2.  **Draw:** Select the Pencil or Brush and click and drag on the canvas to create your masterpiece
+3.  **Change Colors:** Under the Options Menu, select from many 5-color palettes or make your own
+4.  **Background transparency** In the Palette Menu, toggle the Transparency Mask and add the background wherever you want
+5.  **Export:** Export as animated gif, static image with or without the background
 
 ## TODOS?
 - [ ] **MORE (or less?) WIGGLE** Ajust and control PRECISELY how much MORE wigglyness you deserve.
